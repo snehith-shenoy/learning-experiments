@@ -25,10 +25,10 @@ public:
 
 };
 
-class Bus: public sc_channel, public bus_if, public addrMap{
+class Bus: public sc_channel, public bus_if {
 
 public:
-	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(nm),pMaster(nMaster) ,pSlave(nSlave),amap(nSlave)
+	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(nm),pMaster(nSlave),amap(nSlave)
 		{
 
 		}
@@ -42,7 +42,7 @@ public:
 
 
 	std::vector<sc_port<bus_if>> pMaster;
-	std::vector<sc_port<bus_if>> pSlave;
+	// std::vector<sc_port<bus_if>> pSlave;
 	std::vector<addrMap> amap;
 
 };

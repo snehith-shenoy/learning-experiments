@@ -26,11 +26,9 @@ class TopModule: public sc_module{
     bus.set_addr_map(0x3000,0xFFFF,0);
 
 	//Binding
-	lc3.iport(bus.pMaster[0]);
-	lc3.dport(bus.pMaster[1]);
-	bus.pMaster[0](bus);
-	bus.pMaster[1](bus);
-	bus.pSlave[0](mem);
+	lc3.iport(bus);
+	lc3.dport(bus);
+	bus.pMaster[0](mem);
  	if(!(mem.load(fn)))
 		std::cout<<"Error in loading program file!";
 	}

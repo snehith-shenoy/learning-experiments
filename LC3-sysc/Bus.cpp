@@ -34,7 +34,7 @@ Bus::status_t Bus::read(uint16 addr, uint16 &data)
 	int slId = get_slave_id(addr);
 //	cout<<"Calling read in Bus"<<"for Slave "<<slId<<std::endl;
 	if (slId>=0)
-		return(pSlave[slId]->read(addr,data));
+		return(pMaster[slId]->read(addr,data));
 	else
 		return BUS_ERROR;
 }
@@ -43,7 +43,7 @@ Bus::status_t Bus::write(uint16 addr,uint16 data)
 {
 	int slId = get_slave_id(addr);
 	if (slId>=0)
-		return(pSlave[slId]->write(addr,data));
+		return(pMaster[slId]->write(addr,data));
 	else
 		return BUS_ERROR;
 }
