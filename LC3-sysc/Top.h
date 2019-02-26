@@ -23,7 +23,7 @@ class TopModule: public sc_module{
 	//     set_addr_map(uint16 low, uint16 high, uint16 slaveId);
 	std::cout<<"Setting address map.."<<std::endl;
 
-    bus.set_addr_map(0x0,0x3000,0);
+    bus.set_addr_map(0x3000,0xFFFF,0);
 
 	//Binding
 	lc3.iport(bus.pMaster[0]);
