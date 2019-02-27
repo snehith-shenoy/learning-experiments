@@ -15,30 +15,28 @@
 class TopModule: public sc_module{
 
 	public:
+    LC3 lc3;
+    Memory mem;
+    Bus bus;
 
 	// Bus: arg2 = nMasters arg3 = nSlaves
         TopModule(sc_module_name nm, char *fn): sc_module(nm),lc3("LC3"),mem("Memory"),bus("bus",2,1)
 	{
 
 	//     set_addr_map(uint16 low, uint16 high, uint16 slaveId);
-	std::cout<<"Setting address map.."<<std::endl;
-
     bus.set_addr_map(0x3000,0xFFFF,0);
+    std::cout<<"Address map set!"<<std::endl;
 
 	//Binding
-	lc3.iport(bus.pMaster[0]);
-	lc3.dport(bus.pMaster[1]);
-	bus.pMaster[0](bus);
-	bus.pMaster[1](bus);
-	bus.pSlave[0](mem);
+
+	lc3.iport(bus.pSlave[0]);
+	lc3.dport(bus.pSlave[1]);
+	bus.pMaster[0](mem.memPort);
+	std::cout<<"Bound!"<<std::endl;
  	if(!(mem.load(fn)))
 		std::cout<<"Error in loading program file!";
 	}
 
-
-      LC3 lc3;
-      Memory mem;
-      Bus bus;
 };
 
 

@@ -2,7 +2,7 @@
  * Bus.h
  *
  *  Created on: 25-Feb-2019
- *      Author: vayavya
+ *      Author: snehiths
  */
 
 #ifndef BUS_H_
@@ -28,10 +28,7 @@ public:
 class Bus: public sc_channel, public bus_if, public addrMap{
 
 public:
-	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(nm),pMaster(nMaster) ,pSlave(nSlave),amap(nSlave)
-		{
-
-		}
+	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave);
 
 	status_t read(uint16 addr, uint16 &data);
 	status_t write(uint16 addr,uint16 data);
@@ -40,9 +37,9 @@ public:
 	int get_slave_id(uint16 addr);
 
 
-
+	std::vector<sc_export<bus_if>> pSlave;
 	std::vector<sc_port<bus_if>> pMaster;
-	std::vector<sc_port<bus_if>> pSlave;
+
 	std::vector<addrMap> amap;
 
 };

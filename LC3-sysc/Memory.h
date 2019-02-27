@@ -18,6 +18,8 @@ using namespace std;
 
 class Memory: public bus_if, public sc_module {
 public:
+
+	sc_export<bus_if> memPort;
 	virtual status_t read(uint16 addr, uint16 &data)
 	{
 

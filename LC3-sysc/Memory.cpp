@@ -2,7 +2,10 @@
 
 
 
-Memory::Memory(sc_module_name nm): sc_module(nm),dataMem(MEM_SIZE){}
+Memory::Memory(sc_module_name nm): sc_module(nm),dataMem(MEM_SIZE)
+	{
+		memPort.bind(*this);
+	}
 
 
 bool Memory::load (std::string file_name)

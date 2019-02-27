@@ -2,10 +2,16 @@
  * Bus.cpp
  *
  *  Created on: 25-Feb-2019
- *      Author: vayavya
+ *      Author: snehiths
  */
 
 #include "Bus.h"
+
+Bus::Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(nm),	pSlave(nMaster) ,pMaster(nSlave), amap(nSlave)
+		{
+			for(unsigned int i=0;i<nMaster; i++)
+				pSlave[i].bind(*this);
+		}
 
 void Bus::set_addr_map(uint16 low, uint16 high, uint slId)
 {
@@ -34,7 +40,7 @@ Bus::status_t Bus::read(uint16 addr, uint16 &data)
 	int slId = get_slave_id(addr);
 //	cout<<"Calling read in Bus"<<"for Slave "<<slId<<std::endl;
 	if (slId>=0)
-		return(pSlave[slId]->read(addr,data));
+		return(pMaster[slId]->read(addr,data));
 	else
 		return BUS_ERROR;
 }
@@ -43,7 +49,7 @@ Bus::status_t Bus::write(uint16 addr,uint16 data)
 {
 	int slId = get_slave_id(addr);
 	if (slId>=0)
-		return(pSlave[slId]->write(addr,data));
+		return(pMaster[slId]->write(addr,data));
 	else
 		return BUS_ERROR;
 }
