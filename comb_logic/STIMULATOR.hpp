@@ -10,9 +10,6 @@ class STIMULATOR: public sc_module
 		STIMULATOR(sc_module_name nm): sc_module(nm)
 	{
 		SC_THREAD(logic_test);
-//		SC_METHOD(mon_print);
-//		sensitive << m_in1;
-//		dont_initialize();	
 	}
 		void logic_test()
 		{
@@ -26,7 +23,7 @@ class STIMULATOR: public sc_module
 				cout<<endl<<"ABCD:"<< m_A<<m_B<<m_C<<m_D<<endl;
 
 				wait(1,SC_NS);
-				cout<<endl<<" Output: "<<m_in1->read()<<" @ "<<sc_time_stamp()<<endl;
+				cout<<endl<<" Output: "<<m_in1<<" @ "<<sc_time_stamp()<<endl;
 
 				wait(1,SC_NS);
 				++t;
@@ -34,9 +31,6 @@ class STIMULATOR: public sc_module
 			 } 		
 		}
 
-		void mon_print()
-		{
-				}
 
 
 	sc_out<bool> m_A,m_B,m_C,m_D;
