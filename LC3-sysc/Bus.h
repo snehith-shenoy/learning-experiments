@@ -25,10 +25,17 @@ public:
 
 };
 
-class Bus: public sc_channel, public bus_if, public addrMap{
+class Bus: public sc_channel, public bus_if {
 
 public:
+<<<<<<< HEAD
 	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave);
+=======
+	Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(nm),pMaster(nSlave),amap(nSlave)
+		{
+
+		}
+>>>>>>> a39fc1a8e762bd3817f8274c0946c4c97eddde33
 
 	status_t read(uint16 addr, uint16 &data);
 	status_t write(uint16 addr,uint16 data);
@@ -39,7 +46,11 @@ public:
 
 	std::vector<sc_export<bus_if>> pSlave;
 	std::vector<sc_port<bus_if>> pMaster;
+<<<<<<< HEAD
 
+=======
+	// std::vector<sc_port<bus_if>> pSlave;
+>>>>>>> a39fc1a8e762bd3817f8274c0946c4c97eddde33
 	std::vector<addrMap> amap;
 
 };
