@@ -7,10 +7,10 @@ class top: public sc_module
 
 	SC_HAS_PROCESS(top);
 	public:
-	top(sc_module_name nm, int size): sc_module(nm), gridsize(size+1),grid(gridsize)
+	top(sc_module_name nm, int size): sc_module(nm), gridsize(size+1),grid(gridsize),clock("top_clock"),gen(0),rep(0)
 	{
-		const sc_time period(5,SC_NS);
-		sc_clock clock("top_clock", period, 0.5,SC_ZERO_TIME, false);
+//		const sc_time period(5,SC_NS);
+//		clock( period, 0.5,SC_ZERO_TIME, false);
 
 		t_clock(clock);
 		SC_METHOD(display);
@@ -38,11 +38,11 @@ class top: public sc_module
 					std::cout<<"Enter the value of "<<(const char*) &cell_name[0] ;
 					std::cin>>life;
 
-					grid[i][j] = new cell((const char*) &cell_name[0], life);
+					grid[i][j] = new cell(cell_name.c_str(), life);
 				}
 				else
 				{
-					grid[i][j] = new cell((const char*) &cell_name[0], false);
+					grid[i][j] = new cell(cell_name.c_str(), false);
 				}
 				grid[i][j]->clk(clock);
 			}
@@ -94,17 +94,24 @@ class top: public sc_module
 	//	private: 
 	void display()
 	{
+		std::cout<<std::endl<<"Generation "<<gen++<<std::endl;
 		for (int i=0; i<gridsize; i++)
 		{
 			std::cout<<endl;
 			for(int j=0; j<gridsize;j++) 
-				std::cout<<grid[i][j]<<" ";
+				std::cout<<grid[i][j]->is_alive()<<" ";
 		}
+		std::cout<<std::endl<<"Continue game? (1/0) : ";
+		cin>>rep;
 
+		if(!rep) sc_stop();
+		
 	}
+
 	int gridsize;
 	std::vector<std::vector<cell*>> grid;
 	sc_clock clock;
 	sc_in<bool> t_clock;
+	unsigned int gen,rep;
 
 }; 
