@@ -1,13 +1,26 @@
+/*
+
+Conway's Game of Life as a SystemC Model
+
+Author: snehiths@vayavyalabs.com
+
+This is the header for cell
+
+*/
+
+
 #pragma once
 
 #include "systemc.h"
+#include <iostream>
+#include <string>
 
 
 class cell_if: public sc_interface
 {
 
 	public:
-		// Return true if cell is alive; else return false
+		// Return true if cell is currently alive; else return false
 		virtual bool is_alive() =0;
 
 
@@ -17,16 +30,19 @@ class cell: public sc_module, public cell_if
 {
 	
 SC_HAS_PROCESS(cell);
+
 	public:
 		sc_in<bool> clk;
 		sc_vector<sc_port<cell_if>> neighbor;
 
-		cell(sc_module_name nm,bool i_life): sc_module(nm),neighbor("nbr_port_vector",8), alivenext(false)
+		cell(sc_module_name nm,bool i_life): sc_module(nm),neighbor("nbr_port_vector",8),alivenow(i_life), alivenext(false),cell_inst(nm)
 	{
 		SC_THREAD(step);
 		sensitive << clk.pos();
-		alivenow = i_life;
-		
+		dont_initialize();
+#if 0
+		std::cout<<"Cell "<<cell_inst<<": "<<alivenow<<std::endl;
+#endif		
 	}
 
 
@@ -35,8 +51,11 @@ SC_HAS_PROCESS(cell);
 			unsigned int nbr_count;
 			while(1)
 			{
-				nbr_count =0;
-				for(int i=0;i<8;i++) if(this->neighbor[i]->is_alive()) nbr_count++;
+				nbr_count = 0;
+				for(int i=0;i<8;i++)
+					{ if(neighbor[i]->is_alive())
+						{ nbr_count++; }
+					}
 				switch(nbr_count)
 				{
 				  case 2: alivenext = alivenow;
@@ -44,8 +63,11 @@ SC_HAS_PROCESS(cell);
 			          default: alivenext = false;
 				}
 				
+				wait(0,SC_NS); //Update in next Delta
 				alivenow = alivenext;
-				wait();
+
+				
+				wait();	
 			}
 
 		}
@@ -56,5 +78,8 @@ return alivenow;
 
 private:
 
+
 bool alivenow, alivenext;
+std::string cell_inst;
+
 };
