@@ -9,7 +9,9 @@ int main(int argc, char * argv[])
 	ButtonFrame bframe(n);
 
 	for (int i=0; i<= rand() % 100 ; i++)
-		bframe.click(rand() % n +1);
+		bframe.m_buttons[rand() % n +1].click();
+
+
 
 
 	return 0;
