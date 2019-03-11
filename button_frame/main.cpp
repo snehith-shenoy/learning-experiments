@@ -8,11 +8,8 @@ int main(int argc, char * argv[])
 
 	ButtonFrame bframe(n);
 
-	for (int i=0; i<= rand() % 100 ; i++)
-		bframe.m_buttons[rand() % n +1].click();
-
-
-
+	for (int i=0; i<= rand() % 200 ; i++)
+		bframe.m_buttons[rand() % n ].click();
 
 	return 0;
 

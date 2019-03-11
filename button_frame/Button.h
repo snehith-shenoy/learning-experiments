@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <functional>	
+
 
 using namespace std;
 
@@ -10,33 +12,23 @@ class Button{
 
 
 	public:
-		static unsigned int m_button_num;
 
+		void click()
+		{
+			m_func();
+		}
 
-	void click(){
-	   m_button_num = m_index;
-
-	  m_fptr();
-	  }
-
-	typedef void (*fptr_t)(void);
-
-	void register_click_handler(fptr_t f)
-	{
-		m_fptr =f;
-		cout<<"You registered Button "<<endl;
-	}
-	Button()
-	{
-		m_button_num++;
-	}
+		void register_click_handler(function<void(void)> f)
+		{
+			m_func =f;
+//			cout<<"You registered a button "<<endl;
+		}
 
 
 	private:
-		unsigned int m_index;
-		fptr_t m_fptr;
+		function<void(void)> m_func;
 
 
 };
 
-unsigned int Button::m_button_num=0;
+
