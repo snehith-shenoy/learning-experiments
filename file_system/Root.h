@@ -7,17 +7,20 @@ class Root: public Folder{
 
 	public:
 		static Root* Get();
-		std::string name()
-		{
-			return m_rootName;
-		}
-	private:
-		Root(std::string nm):m_rootName(nm){}
-		Root (Root const &){};
-		Root operator =(Root const&) {};
-		static Root* m_rootPtr; // = new Root();
-		std::string m_rootName;
+		~Root(){}
 
+	private:
+		Root():Folder("/"){}
+		
+		// Prevent acess to copy/assign constructors
+		Root (Root const &);
+		Root operator =(Root const&);
+		static Root* m_rootPtr;
+		
+		// Restrict functions
+		std::string name(){ return "Root!"; }
+	//	void list(){}
+		void moveto( Base *){}
 
 };
 
@@ -25,9 +28,7 @@ Root* Root::m_rootPtr = NULL;
 
 Root* Root::Get()
 {	
-	if(!m_rootPtr)
-		 m_rootPtr = new Root("/");
-	return m_rootPtr ;
+	return m_rootPtr ? m_rootPtr : new Root();
 }
 
 

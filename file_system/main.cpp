@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
 	
 	f_usr->list();
 
-	std::cout<<"Moving linik from usr/ and file from etc/int/ to etc/\n"; 
+	std::cout<<"\nMoving link from usr/ and file from etc/int/ to etc/\n"; 
 
 	f_etc_foo_dup->moveto(f_etc);
 	f_etc_init_cron->moveto(f_etc);
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
 
 
 	// Delete a folder (and all its children) */
-	//delete f_etc;
+
 	//delete root;
 	return 0;
 }

@@ -13,19 +13,25 @@ class Document: public Base
 
 		Document(std::string name, Folder * parent): m_docName(name), m_parent(parent)
 		{
-			m_parent->addFile(this);
+			m_parent->addChild(this);
+		}
+
+		void list()
+		{
+			std::cout<<name();
 		}
 
 		std::string name()
 
 		{
-			return m_docName;
+			return m_docName+" ";
 		}
 
 		void moveto( Base * dest)
 		{
-			dest->addFile(this);
-			m_parent->rmChildDoc(this);
+			dest->addChild(this);
+			m_parent->remChild(this);
+			m_parent= (Folder *)dest;
 		}
 
 

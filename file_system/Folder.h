@@ -3,6 +3,7 @@
 #define __FOLDER_H__
 
 #include <iostream>
+#include <list>
 #include <string>
 #include <vector>
 #include "Base.h"
@@ -10,29 +11,24 @@
 
 class Folder: public Base{
 
+
+	protected:	Folder(std::string nm): m_foldName(nm), m_parent(this){}
+
 	public:
 
 
-		Folder(){}
-
 		Folder(std::string name, Folder * parent): m_foldName(name), m_parent(parent)
 		{
-			m_parent->addFolder(this);
+			m_parent->addChild(this);
 		} 
 
 
 		~Folder()
 		{
-			for(auto iter= m_childDocs.begin(); iter!=m_childDocs.end();iter++)
+			for(auto iter= m_children.begin(); iter!=m_children.end();iter++)
 			{
 				delete (*iter);
 			}
-
-			for(auto iter= m_childFolders.begin(); iter!=m_childFolders.end();iter++)
-			{
-				delete (*iter);
-			}
-
 
 		}
 
@@ -41,65 +37,49 @@ class Folder: public Base{
 		{
 			
 			std::cout<<"\nContents of "<<m_foldName<<"\n";
-			if(m_childDocs.empty() && m_childFolders.empty())
+			if(m_children.empty())
 				std::cout<<"This directory is empty"<<std::endl;
 			else 
 			{
-				for (auto it=m_childDocs.begin(); it!=m_childDocs.end();it++)
+				for (auto it=m_children.begin(); it!=m_children.end();it++)
 					std::cout<<(*it)->name()<<" ";
-				for (auto it=m_childFolders.begin(); it!=m_childFolders.end();it++)
-					std::cout<<(*it)->name()<<"/ ";
-
 				std::cout<<std::endl;
 			}
 
 		}
 
-		void addFile(Base* newDoc)
-		{
-			m_childDocs.push_back(newDoc);
-
-		}
-
-		void addFolder(Base * newFolder)
-		{
-			m_childFolders.push_back(newFolder);
-		}
-
 		std::string name()
 		{
-			return m_foldName;
+			return m_foldName+"/ ";
 		}
 		
 		void moveto(Base * dest)
 		{
-			dest->addFolder(this);
-			m_parent->rmChildFolder(this);
+			dest->addChild(this);
+			m_parent->remChild(this);
+			m_parent = (Folder*) dest;
 			
 		}
 
-		void rmChildFolder( Base * trash)
+		void addChild(Base* child)
 		{
-			auto it = m_childFolders.begin();
-			while((*it)!=trash) it++;
-			m_childFolders.erase(it);
+			m_children.push_back(child);
+
 		}
 
-		void rmChildDoc( Base * trash)
+		void remChild( Base * trash)
 		{
-			auto it = m_childDocs.begin();
+			auto it = m_children.begin();
 			while((*it)!=trash) it++;
-			m_childDocs.erase(it);
+			m_children.erase(it);
 		}
+
 	
 		private:
-		
-		std::vector<Base *> m_childFolders;
-		std::vector<Base *> m_childDocs;
-		Folder * m_parent;
-		std::string m_foldName;
 
-//		friend class Document;
+		std::list<Base *> m_children;
+		std::string m_foldName;
+		Folder * m_parent;
 
 };
 

@@ -5,11 +5,14 @@ class Base
 {
 	public: 
 
-		virtual void list() {}
-		virtual void addFile(Base *) {}
-		virtual void addFolder(Base *) {}
+		virtual void list() = 0;
 		virtual std::string name() = 0;
 		virtual void moveto(Base *) = 0;
+		virtual ~Base(){}
+	
+
+		virtual void addChild(Base *){}
+
 
 };
 
