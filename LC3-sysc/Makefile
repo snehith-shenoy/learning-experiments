@@ -1,5 +1,5 @@
 # Directory where SystemC in installed
-SYSTEMC_HOME=~/Documents/systemc/systemc-c++11/
+SYSTEMC_HOME=/home/vayavya/systemc-2.3.3
 SYSTEMC_ARCH=linux64
 
 # List of source files

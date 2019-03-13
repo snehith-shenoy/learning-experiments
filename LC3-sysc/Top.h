@@ -28,17 +28,12 @@ class TopModule: public sc_module{
     std::cout<<"Address map set!"<<std::endl;
 
 	//Binding
-<<<<<<< HEAD
 
 	lc3.iport(bus.pSlave[0]);
 	lc3.dport(bus.pSlave[1]);
 	bus.pMaster[0](mem.memPort);
 	std::cout<<"Bound!"<<std::endl;
-=======
-	lc3.iport(bus);
-	lc3.dport(bus);
-	bus.pMaster[0](mem);
->>>>>>> a39fc1a8e762bd3817f8274c0946c4c97eddde33
+
  	if(!(mem.load(fn)))
 		std::cout<<"Error in loading program file!";
 	}
