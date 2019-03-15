@@ -15,18 +15,14 @@ class OrGate: public sc_module
 
 		void orlogic()
 		{
-
 			m_op->write( m_in1->read() | m_in2->read());
-#ifdef D_PRINT
-
-			cout<<inst_name<<" @ "<<sc_time_stamp()<<" Delta Cycle: "<<sc_delta_count()<<endl;
-#endif
-
+			m_op->write( m_in1->read() | m_in2->read());
+			//cout<<inst_name<<" @ "<<sc_time_stamp()<<" Delta Cycle: "<<sc_delta_count()<<endl;
 		}
 
 		sc_in<bool> m_in1,m_in2;
-
 		sc_out<bool> m_op;
+
 	private:
 		string inst_name;
 

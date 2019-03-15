@@ -21,8 +21,6 @@ class TOP: public sc_module
 		not2("NOT_2"),
 		not3("NOT_3"),
 		stim("Test_Vector_Generator")
-//		mon("Output_Monitor")
-
 
 	{
 
@@ -74,12 +72,11 @@ class TOP: public sc_module
 		private:
 
 		sc_buffer<bool> sigA, sigB, sigC, sigD;	
-		sc_buffer<bool> w1,w2,w3,w4,w5,w6,w7,w8;
-		sc_buffer<bool> buffout;
+		sc_signal<bool> w1,w2,w3,w4,w5,w6,w7,w8;
+		sc_signal<bool> buffout;
 		AndGate and1,and2,and3,and4;
 		OrGate or1,or2;
 		NotGate not1,not2,not3;
 		STIMULATOR stim;
-//		MONITOR mon;
 
 };

@@ -9,15 +9,16 @@ class NotGate: public sc_module
 
 		NotGate(sc_module_name nm):sc_module(nm), inst_name(nm)
 		{
-		SC_METHOD(notlogic);
-		sensitive<<m_in1;
-		dont_initialize();
+			SC_METHOD(notlogic);
+			sensitive<<m_in1;
+	 		dont_initialize();
 		}
 
 		void notlogic()
 		{
 			m_op->write(~m_in1->read());
-//			cout<<inst_name<<" @ "<<sc_time_stamp()<<" Delta Cycle: "<<sc_delta_count()<<endl;
+			m_op->write(~m_in1->read());
+			//cout<<inst_name<<" @ "<<sc_time_stamp()<<" Delta Cycle: "<<sc_delta_count()<<endl;
 
 		}
 

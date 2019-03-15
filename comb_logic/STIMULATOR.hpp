@@ -14,6 +14,9 @@ class STIMULATOR: public sc_module
 		void logic_test()
 		{
 			unsigned short t = 0;
+					
+			cout<<"ABCD | F |\n";
+			cout<<"==========\n";
 
 			while(t<16){
 				m_A->write(t&0x8);			
@@ -21,12 +24,9 @@ class STIMULATOR: public sc_module
 				m_C->write(t&0x2);
 				m_D->write(t&0x1);
 				wait(1,SC_NS);
-				cout<<endl<<"ABCD:"<< m_A<<m_B<<m_C<<m_D<<" T: "<< t <<endl;
 
-				
-				wait(1,SC_NS);
-				cout<<endl<<" Output: "<<m_in1<<" @ "<<sc_time_stamp()<<endl;
-
+				cout<< m_A<<m_B<<m_C<<m_D;
+				cout<<" | "<<m_in1<<" |\n----------\n";
 				++t;
 			
 			 } 		

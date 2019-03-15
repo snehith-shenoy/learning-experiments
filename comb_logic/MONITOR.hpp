@@ -13,11 +13,11 @@ class MONITOR: public sc_module
 		SC_HAS_PROCESS(MONITOR);
 
 		MONITOR(sc_module_name nm): sc_module(nm)
-	{
-		SC_METHOD(mon_print);
-		sensitive<< m_in1;
-		dont_initialize();
-	}
+		{
+			SC_METHOD(mon_print);
+			sensitive<< m_in1;
+			dont_initialize();
+		}
 
 		void mon_print()
 		{
