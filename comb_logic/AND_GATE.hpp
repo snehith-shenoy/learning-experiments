@@ -18,8 +18,7 @@ class AndGate: public sc_module
 		}
 		void andlogic()
 		{
-			m_op->write(m_in1->read() & m_in2->read());
-			m_op->write(m_in1->read() & m_in2->read());
+			m_op->write(m_in1->read() && m_in2->read());
 			//cout<<inst_name<<" @ "<<sc_time_stamp()<<" Delta Cycle: "<<sc_delta_count()<<endl;
 
 		}
