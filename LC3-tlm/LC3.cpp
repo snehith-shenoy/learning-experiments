@@ -325,7 +325,7 @@ void LC3::step()
 	trans.set_streaming_width(2);
 	trans.set_command(tlm::TLM_READ_COMMAND);
 	sc_time delay = SC_ZERO_TIME;
-	
+
 	std::cout<<"\nStarting ISS...";
 
 	while(1)
@@ -342,13 +342,13 @@ void LC3::step()
 			sc_stop();
 		}
 		std::cout<<"\n\nInstruction: "<<std::hex<<instruction<<"| Fetched from PC: "<<std::hex<<m_PC;
- ;
+		;
 		std::cout<<"| OPCODE: "<< opcode_t(get_opcode(instruction))<<std::endl<<std::endl;
-		
+
 		m_PC++;
 		dec_and_exec(instruction);
 
-		wait(1,SC_NS);
+	//	wait(1,SC_NS);
 
 	}
 }
@@ -367,16 +367,33 @@ void LC3::reset()
 
 uint16 LC3::SEXT(int num_bits, uint16 immediate)
 {
-	if(num_bits==11 && (immediate & 0x10)) {
-		//	std::cout<<"IMM5 val: "<<std::hex<<immediate<<" SignExtended: "<<std::hex<<(immediate | 0xFFE0)<<std::endl;
+	if(num_bits==11 && (immediate & 0x10)) 
+	{
 		return (immediate | 0xFFE0);
 	}
-	else if(num_bits==10 &&  (immediate & 0x20)) return (immediate | 0xFFC0);
+	
+	else if(num_bits==10 &&  (immediate & 0x20))
+	{
+		return (immediate | 0xFFC0);
+	}
+	
 	else if(num_bits==7 && (immediate & 0x100))
 	{
-		//	std::cout<<"Returned extended IMM9"<<std::endl;
 		return (immediate | 0xFE00);
 	}
-	else if(num_bits==5 && (immediate & 0x800)) return (immediate | 0xF000);
+	
+	else if(num_bits==5 && (immediate & 0x800))
+	{
+		return (immediate | 0xF000);
+	}
 	else return immediate;
 }
+
+tlm::tlm_sync_enum LC3::nb_transport_bw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph, sc_time& delay)
+{
+	return tlm::TLM_ACCEPTED;
+}
+void LC3::invalidate_direct_mem_ptr(sc_dt::uint64 start_range, sc_dt::uint64  end_range) 
+{
+}
+

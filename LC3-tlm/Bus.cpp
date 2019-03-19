@@ -37,7 +37,7 @@ void Bus::set_addr_map(uint16 low, uint16 high, uint slId)
 unsigned int Bus::get_addrmap_size()
 {
 	return addrMap.size();
-	
+
 }
 int Bus::get_slave_id(uint16 addr)
 {
@@ -53,7 +53,7 @@ int Bus::get_slave_id(uint16 addr)
 
 void Bus::b_transport(tlm::tlm_generic_payload &trans, sc_time& delay)
 {
-	
+
 	int slId = get_slave_id((uint16)trans.get_address());
 #if 0
 	std::cout<<"\nBus recieved address: "<<std::hex<<(uint16)trans.get_address()<<"\n";
@@ -69,3 +69,28 @@ void Bus::b_transport(tlm::tlm_generic_payload &trans, sc_time& delay)
 	}
 }
 
+//Dummy non-blocking interfaces
+
+tlm::tlm_sync_enum Bus::nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph , sc_time& delay)
+{
+	return tlm::TLM_ACCEPTED;
+}
+
+tlm::tlm_sync_enum Bus::nb_transport_bw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph, sc_time& delay)
+{
+	return tlm::TLM_ACCEPTED;
+}
+
+bool Bus::get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
+{
+	return false; 
+}
+
+void Bus::invalidate_direct_mem_ptr(sc_dt::uint64  start_range,sc_dt::uint64  end_range)
+{
+}
+
+unsigned int Bus::transport_dbg(tlm::tlm_generic_payload& trans)
+{
+	return 0;
+}	

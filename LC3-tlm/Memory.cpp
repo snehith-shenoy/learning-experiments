@@ -8,33 +8,34 @@
 #include "Memory.h"
 
 
-
 Memory::Memory(sc_module_name nm): sc_module(nm),dataMem(MEM_SIZE)
-	{
-		memSock.bind(*this);
-	}
+{
+	memSock.bind(*this);
+}
 
 void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 {
 
 	uint16 * dataPtr = (uint16 *)trans.get_data_ptr();
 	uint16 addr = (uint16)trans.get_address();
-	
+
 	switch(trans.get_command())
 	{
 		case tlm::TLM_READ_COMMAND: 
-		{
-			*dataPtr = dataMem[addr];
-			trans.set_response_status(tlm::TLM_OK_RESPONSE);
-			break;
-		}
+			{
+				*dataPtr = dataMem[addr];
+				wait(READ_DELAY); //Read latency
+				trans.set_response_status(tlm::TLM_OK_RESPONSE);
+				break;
+			}
 
 		case tlm::TLM_WRITE_COMMAND:
-		{
-			dataMem[addr] = *dataPtr;
-			trans.set_response_status(tlm::TLM_OK_RESPONSE);
-			break;	
-		}
+			{
+				dataMem[addr] = *dataPtr;
+				wait(WRITE_DELAY); //Write latency
+				trans.set_response_status(tlm::TLM_OK_RESPONSE);
+				break;	
+			}
 
 
 		default:
@@ -42,6 +43,18 @@ void Memory::b_transport(tlm::tlm_generic_payload& trans, sc_time& delay)
 	}
 
 }
+tlm::tlm_sync_enum Memory::nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph , sc_time& delay)
+{
+	return tlm::TLM_ACCEPTED;
+}
+bool Memory::get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data)
+{
+	return false; 
+}
+unsigned int Memory::transport_dbg(tlm::tlm_generic_payload& trans)
+{
+	return 0;
+}	
 
 
 bool Memory::load (std::string file_name)

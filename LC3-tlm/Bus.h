@@ -33,11 +33,11 @@ class Bus: public sc_module, public tlm::tlm_bw_transport_if<>, public tlm::tlm_
 
 		void b_transport(tlm::tlm_generic_payload &, sc_time&);
 
-		tlm::tlm_sync_enum nb_transport_fw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph , sc_time& delay){ return tlm::TLM_ACCEPTED;}
-		tlm::tlm_sync_enum nb_transport_bw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph, sc_time& delay){ return tlm::TLM_ACCEPTED;}
-		bool get_direct_mem_ptr(tlm::tlm_generic_payload& trans, tlm::tlm_dmi& dmi_data){ return false; }
-		void invalidate_direct_mem_ptr(sc_dt::uint64  start_range,sc_dt::uint64  end_range){}
-		unsigned int transport_dbg(tlm::tlm_generic_payload& trans){ return 0;}	
+		tlm::tlm_sync_enum nb_transport_fw(tlm::tlm_generic_payload&, tlm::tlm_phase&, sc_time& );
+		tlm::tlm_sync_enum nb_transport_bw(tlm::tlm_generic_payload&, tlm::tlm_phase&, sc_time&);
+		bool get_direct_mem_ptr(tlm::tlm_generic_payload&, tlm::tlm_dmi& );
+		void invalidate_direct_mem_ptr(sc_dt::uint64, sc_dt::uint64 );
+		unsigned int transport_dbg(tlm::tlm_generic_payload&);
 
 
 		void set_addr_map(uint16 low, uint16 high, uint mPort);

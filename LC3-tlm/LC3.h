@@ -50,9 +50,9 @@ class LC3: public sc_module, public tlm::tlm_bw_transport_if<> {
 
 	~LC3(){}
 
-//Implement bw interface
-	tlm::tlm_sync_enum nb_transport_bw(tlm::tlm_generic_payload& trans, tlm::tlm_phase& ph, sc_time& delay) {return tlm::TLM_ACCEPTED;}
-	void invalidate_direct_mem_ptr(sc_dt::uint64 start_range, sc_dt::uint64  end_range) {};
+// Bw interface
+	tlm::tlm_sync_enum nb_transport_bw(tlm::tlm_generic_payload&, tlm::tlm_phase&, sc_time&);
+	void invalidate_direct_mem_ptr(sc_dt::uint64, sc_dt::uint64);
 
 	private:
 	void reset(); //Resets LC3: R0-R7, PC=0 and clear all flags
