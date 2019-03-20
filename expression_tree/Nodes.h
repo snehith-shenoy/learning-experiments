@@ -3,87 +3,199 @@
 
 #include <iostream>
 using namespace std;
+enum m_nodeType { NUMBER, VARIABLE, PLUS, MINUS, MULTIPLY, DIVIDE };
 
-class Node
+class Num;
+class Var;
+class OpPlus;
+class OpMinus;
+class OpMul;
+class OpDiv;
+
+class visitorHome
+{
+	public: 
+		virtual void visit(Num & n) =0;
+		virtual void visit(Var & n) =0;
+		virtual void visit(OpPlus & n) =0;
+		virtual void visit(OpMinus & n) =0;
+		virtual void visit(OpMul &n) =0;
+		virtual void visit(OpDiv &n) =0;
+
+
+};
+
+class visitor : public visitorHome
 {
 	public:
-	
-
-
-	virtual ~Node(){}
-	
-	void setname(string nm) { m_nodename = nm; }
-	
-	string print()
+		void visit(Num &n) 
 		{
-			return m_nodename;
+			t = NUMBER;			
 		}
+		void visit(Var &n)
+		{
+			t = VARIABLE;	
+		}
+		void visit(OpPlus &n)
+		{
+			t = PLUS;
+		}
+		void visit(OpMinus &n) 
+		{
 
-	
+			t = MINUS;
+		}
+		void visit(OpMul &n) 
+		{
+
+			t = MULTIPLY;
+		}
+		void visit(OpDiv & n) 
+		{
+
+			t = DIVIDE;
+		}
+		m_nodeType get_type()
+		{
+			return t;
+		} 
 	private:
-		string m_nodename;
-
-	friend	ostream & operator<<(ostream & out, Node* n);
+		m_nodeType t;
 
 };
 
 
+class Node
+{
+	public:
+
+
+
+		~Node(){};
+
+		virtual void accept(visitorHome &v) =0;
+		Node(){}
+
+		virtual string print() =0;
+
+
+	private:
+		friend	ostream & operator<<(ostream & out, Node* n);
+
+};
+
+
+
 ostream & operator<<(ostream & out, Node* n)
-		{
-		   out<<n->print();
-		   return out;
-		} 
+{
+	out<<n->print();
+	return out;
+} 
 
 
 class Num:public Node
 {
 	public: 
-		Num(int n){ setname(to_string(n));}
+		Num(int n): m_num(to_string(n)){}
+
+		string print(){
+			return m_num;
+		}
+
+		void accept( visitorHome &v)
+		{ v.visit(*this); }
+
+	private: string m_num;
+
 };
 
 
 class Var: public Node
 {
 	public:
-		Var(string variable) {setname(variable);}
-		~Var(){}
+		Var(string variable): m_varname(variable){}
 
-	
+		string print()
+		{
+			return m_varname;
+		}
+
+		void accept( visitorHome &v)
+		{ v.visit(*this); }
+
+
+	private:
+		string m_varname;
+
+
 };
 
 class OpPlus: public Node
 {
 	public:
-		OpPlus(){ setname("+"); }
+		OpPlus(): m_opname("+") { }
 
-		~OpPlus(){}
-		
+		string print()
+		{
+			return m_opname;
+		}
+
+		void accept( visitorHome &v)
+		{ v.visit(*this); }
+
+	private: string m_opname;
+
 };
 
 class OpMinus: public Node
 {
 	public:
-		OpMinus() { setname("-"); }
+		OpMinus(): m_opname("-"){}
 
-		~OpMinus(){}
+		string print()
+		{
+			return m_opname;
+		}
+
+		void accept( visitorHome &v)
+		{ 
+			v.visit(*this);
+		}
+
+	private: string m_opname;
+
 };
 
 class OpMul: public Node
 {
 	public:
-		OpMul() { setname("*");}
+		OpMul():  m_opname("*"){}
 
-		~OpMul(){}
+		string print()
+		{
+			return m_opname;
+		}
 
+		void accept( visitorHome &v)
+		{ v.visit(*this); }
+
+	private: string m_opname;
 
 };
 class OpDiv: public Node
 {
 	public:
-		OpDiv() { setname("/"); }
+		OpDiv(): m_opname("/") {}
 
-		~OpDiv(){}
+		string print()
+		{
+			return m_opname;
+		}
 
+		void accept( visitorHome &v)
+		{ v.visit(*this); }
+
+	private: string m_opname;
 };
 
 
