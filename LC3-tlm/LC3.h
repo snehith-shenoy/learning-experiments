@@ -1,8 +1,8 @@
 /*
  * LC3.h
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
  */
 
 #ifndef __LC3_h__
@@ -14,7 +14,7 @@
 #include "Headers.h"
 #include <iostream>
 
-#define LC3_NUM_REGS 8
+#define LC3_NUM_REGS 9
 
 typedef enum opcode {
 
@@ -28,11 +28,11 @@ typedef enum opcode {
 	OP_STR,          // mem[BaseR + offset6] = SR
 	OP_RTI,          // PC = R7, exit supervisor mode
 	OP_NOT,          // DR = ~SR1
-	OP_LEA,		   // Load Effective Address: DR=PC +SEXT(PCoffset9)
 	OP_LDI,          // DR = mem[mem[PCi + PCoffset9]]
 	OP_STI,          // mem[mem[PCi + offset9]] = SR
 	OP_JMP_RET,      // PC = R7 (RET) or PC = Rx (JMP Rx)
 	OP_RESERVED,     // Currently not used
+	OP_LEA,		  	 // Load Effective Address: DR=PC +SEXT(PCoffset9)
 	OP_TRAP
 } opcode_t;
 
@@ -45,7 +45,7 @@ class LC3: public sc_module, public tlm::tlm_bw_transport_if<> {
 
 		tlm::tlm_initiator_socket<16> 	iport; //Instruction access socket, only reads
 		tlm::tlm_initiator_socket<16> 	dport; // Data access port, read/write, load-store
-
+		sc_in<bool> m_nReset, m_nIRQ; // Reset and IRQ signals
 		LC3(sc_module_name);
 
 	~LC3(){}
@@ -66,8 +66,10 @@ class LC3: public sc_module, public tlm::tlm_bw_transport_if<> {
 	bool m_P;
 
 	uint16 m_PC;
-
 	std::vector<uint16> m_R;
+
+	bool m_acceptIRQ;
+	sc_process_handle step_handle;
 
 	uint16 SEXT(int n, uint16 data);
 	opcode_t get_opcode(uint16 inst);

@@ -1,8 +1,8 @@
 /*
  * Headers.h
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
  */
 
 
@@ -12,6 +12,6 @@
 #include "systemc.h"
 #include "tlm.h"
 
-typedef unsigned short uint16;
+typedef short uint16;
 
 #endif

@@ -1,8 +1,8 @@
 /*
  * Memory.h
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
  */
 
 #ifndef __MEMORY_H__
@@ -14,11 +14,11 @@
 #include <vector>
 #include <iomanip>
 #include <bits/stdc++.h>
-#include <bitset>
+
 
 #define MEM_SIZE 0xFFFF
-#define READ_DELAY 10,SC_NS
-#define WRITE_DELAY 5,SC_NS
+#define READ_DELAY 10
+#define WRITE_DELAY 5
 
 
 class Memory: public sc_module,  public tlm::tlm_fw_transport_if<> {

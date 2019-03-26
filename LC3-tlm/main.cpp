@@ -5,8 +5,8 @@
  * Test Bench for LC3 Arhitecture Implementation
  * using TLM 2.0
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
  */
 
 
@@ -27,6 +27,16 @@ int sc_main(int argc, char *argv[])
 	TopModule top("Top",argv[1]);
 	
 	//Simulate for 100 ns
+	top.nIRQ.write(1);
+	top.nReset.write(0);
+	sc_start(100,SC_NS);
+
+	top.nIRQ.write(0);
+	top.nReset.write(1);
+	sc_start(100,SC_NS);
+
+	top.nIRQ.write(1);
+	top.nReset.write(1);
 	sc_start(100,SC_NS);
 
 	return 0;

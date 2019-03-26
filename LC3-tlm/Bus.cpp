@@ -24,7 +24,7 @@ Bus::Bus(sc_module_name nm,unsigned int nMaster,unsigned int nSlave):sc_module(n
 
 }
 
-void Bus::set_addr_map(uint16 low, uint16 high, uint slId)
+void Bus::set_addr_map(unsigned short low, unsigned short high, uint16 slId)
 {
 	addrElement temp;
 	temp.low=low;
@@ -43,7 +43,7 @@ int Bus::get_slave_id(uint16 addr)
 {
 	for(auto iter=addrMap.begin();iter!=addrMap.end();iter++)
 	{
-		if(iter->belongs(addr))
+		if(iter->belongs((unsigned short)addr))
 		{
 			return iter->slaveId;
 		}
@@ -58,6 +58,7 @@ void Bus::b_transport(tlm::tlm_generic_payload &trans, sc_time& delay)
 #if 0
 	std::cout<<"\nBus recieved address: "<<std::hex<<(uint16)trans.get_address()<<"\n";
 	std::cout<<"\nBus recieved data ptr: "<<std::hex<<(uint16 *)trans.get_data_ptr()<<"\n";
+	std::cout<<"\nSlave: "<<slId<<"\n";
 #endif
 	if (slId>=0)
 	{

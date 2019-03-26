@@ -1,8 +1,8 @@
 /*
  * Bus.h
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
 */
 
 #ifndef BUS_H_
@@ -12,10 +12,10 @@
 
 class addrElement{  //Address map of each slave
 public:
-	uint16 low;
-	uint16 high;
+	unsigned short low;
+	unsigned short high;
 	int slaveId;
-	bool belongs(uint16 addr)
+	bool belongs(unsigned short addr)
 	{
 		if ((low<=addr )&& (addr <= high))
 			return true;
@@ -40,7 +40,7 @@ class Bus: public sc_module, public tlm::tlm_bw_transport_if<>, public tlm::tlm_
 		unsigned int transport_dbg(tlm::tlm_generic_payload&);
 
 
-		void set_addr_map(uint16 low, uint16 high, uint mPort);
+		void set_addr_map(unsigned short low, unsigned short high, uint16 mPort);
 		unsigned int get_addrmap_size(void);
 
 

@@ -1,8 +1,8 @@
 /*
  * LC3.cpp
  *
- *  Created on: 14-Mar-2019
- *      Author: snehiths
+ *  Created on: 26-Mar-2019
+ *      Author: Snehith Shenoy
  */
 
 #include "LC3.h"
@@ -31,10 +31,14 @@ LC3::LC3(sc_module_name nm):sc_module(nm),
 	m_Z(0),
 	m_P(0),
 	m_PC(0x3000),
-	m_R(LC3_NUM_REGS)
+	m_R(LC3_NUM_REGS),
+	m_acceptIRQ(true)
 {
 	std::fill(m_R.begin(), m_R.end(), 0); //Reset R0-R7
 	SC_THREAD(step);
+	async_reset_signal_is(m_nReset,false);
+	step_handle = sc_get_current_process_handle();
+
 	iport.bind(*this);
 	dport.bind(*this);
 }
@@ -50,7 +54,11 @@ void LC3::setcc(uint16 result)
 		m_Z=0; m_N=1; m_P=0;
 	}
 	else
+	{
 		m_Z=0; m_N=0; m_P=1;
+	}
+
+	std::cout<<"PSR Flags >> Z: "<<m_Z<<" P: "<<m_P<<" N: "<<m_N<<std::endl;
 }
 
 opcode_t LC3::get_opcode(uint16 inst)
@@ -93,9 +101,13 @@ void LC3::dec_and_exec(uint16 instruction)
 	{
 		case  OP_BR:         // PC = PCi + PCoffset9 if condition is met
 			{
-				if ( (m_N&(instruction&n_MASK)) || (m_Z&(instruction&z_MASK)) || (m_P&(instruction&p_MASK)))
-
+				if ( (m_N&&(instruction&n_MASK)) || (m_Z&&(instruction&z_MASK)) || (m_P&&(instruction&p_MASK))
+					||	(!((instruction&n_MASK)  || (instruction&z_MASK) 		|| (instruction&p_MASK)))
+				   )
+				{
 					m_PC+= SEXT(7,instruction&IMM9_MASK);
+					std::cout<<"Branch JUMP to: "<<std::hex<<m_PC<<"\n";
+				}
 				break;
 			}
 
@@ -200,6 +212,7 @@ void LC3::dec_and_exec(uint16 instruction)
 
 				setcc(m_R[(instruction&DR_MASK)>>9]);
 				std::cout<<"OP_LDR result: "<<std::hex<<m_R[(instruction&DR_MASK)>>9]<<" at R"<<((instruction&DR_MASK)>>9)<<std::endl;
+				std::cout<<"Used BREG: "<<((instruction&BREG_MASK)>>6)<<" and IMM6: "<<std::hex<<SEXT(10,instruction&IMM6_MASK)<<"\n";
 				break;
 			}
 
@@ -225,7 +238,18 @@ void LC3::dec_and_exec(uint16 instruction)
 
 		case OP_RTI:          // PC = R7: exit supervisor mode
 			{
-				//Pending
+				trans.set_command(tlm::TLM_READ_COMMAND);
+				trans.set_data_ptr((unsigned char *) &m_PC);
+				trans.set_address((sc_dt::uint64) (--m_R[5])); //Stack pointer
+				trans.set_response_status( tlm::TLM_INCOMPLETE_RESPONSE );
+				dport->b_transport(trans, delay);
+				if(trans.is_response_error())
+				{
+					SC_REPORT_ERROR("",trans.get_response_string().c_str());
+					sc_stop();
+				}
+				std::cout<<"RET! Restored PC to: "<<m_PC<<" | Stack pointer now: "<<m_R[5]<<"\n";
+				m_acceptIRQ = true;
 				break;
 			}
 
@@ -291,23 +315,30 @@ void LC3::dec_and_exec(uint16 instruction)
 		case OP_JMP_RET:      // PC = R7 (RET) or PC = Rx (JMP Rx)
 			{
 				if((instruction&BREG_MASK)==0x1C0)
+				{
 					m_PC= m_R[7];
+				}
 				else
+				{
 					m_PC= m_R[(instruction&BREG_MASK)>>6]; //JMP
+					std::cout<<"Unconditional JUMP to: "<<m_R[(instruction&BREG_MASK)>>6]<<std::endl;
+				}
 				break;
 
 
 			}
 		case OP_RESERVED:
 			{
+				m_PC = 0x2;
+
 				std::cout<<"Illegal OPCODE!";
-				sc_stop();
+				//sc_stop();
 				break;
 			}
 		case OP_TRAP:
 			{
 				//Pending
-				sc_stop();
+				//sc_stop();
 				break;
 			}
 	}
@@ -318,6 +349,11 @@ void LC3::dec_and_exec(uint16 instruction)
 
 void LC3::step()
 {
+	if(!m_nReset)
+	{
+		reset();
+	}
+
 	uint16 instruction;
 	tlm::tlm_generic_payload trans;
 	trans.set_data_length(2);
@@ -326,43 +362,66 @@ void LC3::step()
 	trans.set_command(tlm::TLM_READ_COMMAND);
 	sc_time delay = SC_ZERO_TIME;
 
+
 	std::cout<<"\nStarting ISS...";
 
 	while(1)
 	{
+
+		if(m_acceptIRQ && !m_nIRQ)
+		{
+			m_acceptIRQ = false;
+			trans.set_command(tlm::TLM_WRITE_COMMAND);
+			trans.set_address((sc_dt::uint64)(m_R[5]++));
+			trans.set_data_ptr((unsigned char *)&m_PC);
+			trans.set_response_status( tlm::TLM_INCOMPLETE_RESPONSE );// Clear the response status
+			dport->b_transport(trans, delay);
+
+			if (trans.is_response_error() ) // Check return value of b_transport
+			{
+				SC_REPORT_ERROR("Failed to fetch IRQ vector", trans.get_response_string().c_str());
+				sc_stop();
+			}
+			cout<<"IRQ! Saved PC: "<<std::hex<<m_PC<<" | Jumping to: 0x1\n";
+			m_PC = 1;
+			trans.set_command(tlm::TLM_READ_COMMAND);
+		}
 		trans.set_address((sc_dt::uint64)m_PC);
 		trans.set_data_ptr((unsigned char *)(&instruction));
 		trans.set_response_status( tlm::TLM_INCOMPLETE_RESPONSE );// Clear the response status
 
 		iport->b_transport(trans, delay);
-
 		if (trans.is_response_error() ) // Check return value of b_transport
 		{ 
-			SC_REPORT_ERROR("", trans.get_response_string().c_str());
+			SC_REPORT_ERROR("Failed to fetch instruction", trans.get_response_string().c_str());
 			sc_stop();
 		}
-		std::cout<<"\n\nInstruction: "<<std::hex<<instruction<<"| Fetched from PC: "<<std::hex<<m_PC;
-		;
-		std::cout<<"| OPCODE: "<< opcode_t(get_opcode(instruction))<<std::endl<<std::endl;
 
+		std::cout<<"\n\nTime : "<< sc_time_stamp()<<" | Instruction: "<<std::hex<<instruction<<"| Fetched from PC: "<<std::hex<<m_PC;
+		std::cout<<"| OPCODE: "<< opcode_t(get_opcode(instruction))<<std::endl<<std::endl;
 		m_PC++;
 		dec_and_exec(instruction);
 
-	//	wait(1,SC_NS);
-
 	}
+
 }
 
 void LC3::reset()
 {
 
-	m_PC=0; //Reset PC
+	m_PC=0; // PC = Reset vector
 	std::fill(m_R.begin(), m_R.end(), 0); //Reset R0-R7
 
 	//Reset PSR flags
 	m_privilege =0;
 	m_priority =0;
-	m_N = 0; m_Z = 0; m_P = 0;
+	m_N = 0; m_Z = 1; m_P = 0;
+
+	//Accept new interrupt
+	m_acceptIRQ = false;
+
+	std::cout<<"\nISS has been reset!\n";
+//	step_handle.resume();
 }
 
 uint16 LC3::SEXT(int num_bits, uint16 immediate)
