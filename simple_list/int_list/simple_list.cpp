@@ -32,7 +32,7 @@ simple_list& simple_list::operator=(const simple_list& copy) //Deep copy
 {
 	if(this != &copy)
 		{
-			node *from = copy.begin();
+			node *from = copy.n;
 			n = new node;
 			node *to = n;
 			if(from)
@@ -112,7 +112,7 @@ void simple_list::erase_after(int d)
 			   }
 		}
 	else
-		std::cerr<<d<<" not found in list"<<std::endl;
+		std::cerr<<d<<" not found in list\n";
 
 }
 
@@ -152,26 +152,29 @@ void simple_list::insert_after(int pos, int d)
 
 }
 
-node* simple_list::begin()
+simple_list::iterator simple_list::begin()
 {
-	return n;
+	return iterator(n);
 }
 
-node* simple_list::begin() const
+simple_list::iterator simple_list::end()
 {
-	return n;
+	return iterator();
+
+}
+
+simple_list::const_iterator simple_list::cbegin()
+{
+	return const_iterator(n);
 }
 
 
-node* simple_list::end()
+simple_list::const_iterator simple_list::cend()
 {
-  	node* temp = n;
-	while(temp->next!=NULL) 
-		temp = temp->next;
+	return const_iterator();
 	
-	return temp;
-	
 }
+
 
 bool simple_list::empty()
 {
@@ -193,7 +196,7 @@ unsigned int simple_list::max_size()
 ostream& operator<<(ostream &out, simple_list &lst) 
 {
 	
-	node *temp = lst.begin();
+	simple_list::node *temp = lst.n;
 	out<<"Head ";
 	while(temp)
 	{
@@ -207,3 +210,5 @@ ostream& operator<<(ostream &out, simple_list &lst)
 	return out<<"\n";
 	
 }
+
+
